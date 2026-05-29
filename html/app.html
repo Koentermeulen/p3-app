@@ -17,31 +17,31 @@
       <div class="app">
 
       <div class="app-header">
-        <div>Goedemorgen, Alex 👋</div>
+        <div id="header-greeting">Goedemorgen, Alex 👋</div>
         <div class="profile" onclick="openProfile()">AD</div>
       </div>
 
       <div class="main-content">
         <!-- HOME -->
         <div id="home" class="tab-content active">
-          <div class="card mb-3"><h3 class="card-title">Stappen vandaag</h3><div class="value">8.421 <span style="font-size:1rem;">/10.000</span></div></div>
+          <div class="card mb-3"><h3 id="home-steps-title" class="card-title">Stappen vandaag</h3><div class="value">8.421 <span style="font-size:1rem;">/10.000</span></div></div>
           <div class="row g-3 mb-3">
             <div class="col-12 col-md-6">
-              <div class="card"><h3 class="card-title">Slaap</h3><div class="value">7u 45m</div></div>
+              <div class="card"><h3 id="home-sleep-title" class="card-title">Slaap</h3><div class="value">7u 45m</div></div>
             </div>
             <div class="col-12 col-md-6">
-              <div class="card"><h3 class="card-title">Calorieën</h3><div class="value">1.950</div></div>
+              <div class="card"><h3 id="home-calories-title" class="card-title">Calorieën</h3><div class="value">1.950</div></div>
             </div>
           </div>
         </div>
 
         <!-- Andere tabs (stats, goals, settings) -->
         <div id="stats" class="tab-content">
-          <h3 class="mb-3">Stats</h3>
+          <h3 id="stats-title" class="mb-3">Stats</h3>
           <div class="row">
             <div class="col-12 col-md-6">
               <div class="card mb-3 p-3">
-                <h5 class="card-title">Wekelijkse stappen</h5>
+                <h5 id="stats-weekly-steps-label" class="card-title">Wekelijkse stappen</h5>
                 <ul class="list-unstyled mb-0">
                   <li>Ma: 7.200</li>
                   <li>Di: 8.421</li>
@@ -55,9 +55,9 @@
             </div>
             <div class="col-12 col-md-6">
               <div class="card mb-3 p-3">
-                <h5 class="card-title">Gemiddelde slaap</h5>
+                <h5 id="stats-average-sleep-label" class="card-title">Gemiddelde slaap</h5>
                 <div class="value">7u 10m</div>
-                <h5 class="card-title mt-3">Gemiddelde calorieën</h5>
+                <h5 id="stats-average-calories-label" class="card-title mt-3">Gemiddelde calorieën</h5>
                 <div class="value">2.050</div>
               </div>
             </div>
@@ -65,11 +65,11 @@
         </div>
 
         <div id="goals" class="tab-content">
-          <h3 class="mb-3">Doelen</h3>
+          <h3 id="goals-title" class="mb-3">Doelen</h3>
           <div class="list-group mb-3">
             <div class="list-group-item d-flex justify-content-between align-items-center">
               <div style="flex:1; margin-right:12px;">
-                <div class="fw-semibold">10.000 stappen per dag</div>
+                <div id="goal-steps-label" class="fw-semibold">10.000 stappen per dag</div>
                 <div class="progress mt-2" style="height:10px;">
                   <div id="goal-steps" class="progress-bar bg-success" role="progressbar" style="width:84%">84%</div>
                 </div>
@@ -79,7 +79,7 @@
 
             <div class="list-group-item d-flex justify-content-between align-items-center">
               <div style="flex:1; margin-right:12px;">
-                <div class="fw-semibold">Drink 2L water</div>
+                <div id="goal-water-label" class="fw-semibold">Drink 2L water</div>
                 <div class="progress mt-2" style="height:10px;">
                   <div id="goal-water" class="progress-bar bg-info" role="progressbar" style="width:64%">64%</div>
                 </div>
@@ -90,31 +90,39 @@
         </div>
 
         <div id="settings" class="tab-content">
-          <h3 class="mb-3">Instellingen</h3>
+          <h3 id="settings-title" class="mb-3">Instellingen</h3>
           <form id="settings-form" onsubmit="event.preventDefault(); saveSettings();">
             <div class="mb-3">
-              <label class="form-label">Naam</label>
+              <label id="label-name" class="form-label">Naam</label>
               <input id="user-name" class="form-control" placeholder="Alex">
+            </div>
+
+            <div class="mb-3">
+              <label id="label-language" class="form-label">Taal</label>
+              <div class="d-flex gap-2">
+                <button type="button" id="language-nl" class="btn btn-outline-secondary" onclick="setLanguage('nl')">Nederlands</button>
+                <button type="button" id="language-en" class="btn btn-outline-secondary" onclick="setLanguage('en')">English</button>
+              </div>
             </div>
 
             <div class="form-check form-switch mb-3">
               <input class="form-check-input" type="checkbox" id="dark-mode-toggle" onchange="toggleTheme(this.checked)">
-              <label class="form-check-label" for="dark-mode-toggle">Donkere modus</label>
+              <label id="label-dark-mode" class="form-check-label" for="dark-mode-toggle">Donkere modus</label>
             </div>
 
             <div class="form-check mb-3">
               <input class="form-check-input" type="checkbox" id="notif-toggle">
-              <label class="form-check-label" for="notif-toggle">Notificaties</label>
+              <label id="label-notif" class="form-check-label" for="notif-toggle">Notificaties</label>
             </div>
 
-            <button class="btn btn-primary" type="submit">Opslaan</button>
+            <button id="save-settings-btn" class="btn btn-primary" type="submit">Opslaan</button>
           </form>
         </div>
 
         <!-- AI -->
         <div id="ai" class="tab-content">
-          <h3>Wellness AI Coach</h3>
-          <div style="height: 380px; display:flex; flex-direction:column; border:1px solid #ddd; border-radius:16px; overflow:hidden;">
+          <h3 id="ai-title">Wellness AI Coach</h3>
+          <div style="height: 380px; display:flex; flex-direction:column; border:1px solid #ddd; border-radius:16px; overflow:hidden;" id="ai-card">
             <div class="messages" id="messages">
               <div class="message ai">Hoi Alex! Hoe kan ik je helpen?</div>
             </div>
@@ -129,19 +137,19 @@
 
         <!-- Profiel -->
         <div id="profile-screen" style="position:absolute;top:0;left:0;right:0;bottom:0;background:white;z-index:100;display:none;flex-direction:column;padding:20px;">
-          <h2>Profiel</h2>
-          <div class="card">Alex de Vries - 28 jaar</div>
-          <button onclick="closeProfile()" style="margin-top:auto; padding:12px; background:#ef4444; color:white; border:none; border-radius:12px;">Terug</button>
+          <h2 id="profile-title">Profiel</h2>
+          <div id="profile-info" class="card">Alex de Vries - 28 jaar</div>
+          <button id="profile-back-btn" onclick="closeProfile()" style="margin-top:auto; padding:12px; background:#ef4444; color:white; border:none; border-radius:12px;">Terug</button>
         </div>
       </div>
 
       <!-- Bottom Nav -->
       <div class="bottom-nav">
-        <div class="nav-item active" onclick="switchTab(0)"><i class="fas fa-home"></i><div>Home</div></div>
-        <div class="nav-item" onclick="switchTab(1)"><i class="fas fa-chart-bar"></i><div>Stats</div></div>
-        <div class="nav-item" onclick="switchTab(2)"><i class="fas fa-flag"></i><div>Doelen</div></div>
-        <div class="nav-item" onclick="switchTab(3)"><i class="fas fa-cog"></i><div>Instellingen</div></div>
-        <div class="nav-item" onclick="switchTab(4)"><i class="fas fa-robot"></i><div>AI</div></div>
+        <div class="nav-item active" onclick="switchTab(0)"><i class="fas fa-home"></i><div id="nav-home">Home</div></div>
+        <div class="nav-item" onclick="switchTab(1)"><i class="fas fa-chart-bar"></i><div id="nav-stats">Stats</div></div>
+        <div class="nav-item" onclick="switchTab(2)"><i class="fas fa-flag"></i><div id="nav-goals">Doelen</div></div>
+        <div class="nav-item" onclick="switchTab(3)"><i class="fas fa-cog"></i><div id="nav-settings">Instellingen</div></div>
+        <div class="nav-item" onclick="switchTab(4)"><i class="fas fa-robot"></i><div id="nav-ai">AI</div></div>
       </div>
     </div>
 

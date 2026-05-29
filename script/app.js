@@ -67,13 +67,138 @@ function toggleTheme(enable) {
   }
 }
 
+const translations = {
+  nl: {
+    pageTitle: 'Wellness • App',
+    greeting: 'Goedemorgen, {name} 👋',
+    settingsTitle: 'Instellingen',
+    nameLabel: 'Naam',
+    languageLabel: 'Taal',
+    darkModeLabel: 'Donkere modus',
+    notifLabel: 'Notificaties',
+    saveButton: 'Opslaan',
+    settingsSaved: 'Instellingen opgeslagen',
+    statsTitle: 'Stats',
+    goalsTitle: 'Doelen',
+    aiTitle: 'Wellness AI Coach',
+    aiPlaceholder: 'Typ je bericht...',
+    aiGreeting: 'Hoi {name}! Hoe kan ik je helpen?',
+    profileTitle: 'Profiel',
+    profileInfo: 'Alex de Vries - 28 jaar',
+    profileBack: 'Terug',
+    navHome: 'Home',
+    navStats: 'Stats',
+    navGoals: 'Doelen',
+    navSettings: 'Instellingen',
+    navAi: 'AI',
+    homeStepsTitle: 'Stappen vandaag',
+    homeSleepTitle: 'Slaap',
+    homeCaloriesTitle: 'Calorieën',
+    statsWeeklyStepsLabel: 'Wekelijkse stappen',
+    statsAverageSleepLabel: 'Gemiddelde slaap',
+    statsAverageCaloriesLabel: 'Gemiddelde calorieën',
+    goalStepsLabel: '10.000 stappen per dag',
+    goalWaterLabel: 'Drink 2L water',
+    goalMarkButton: 'Markeer',
+    goalDoneButton: 'Voltooid'
+  },
+  en: {
+    pageTitle: 'Wellness • App',
+    greeting: 'Good morning, {name} 👋',
+    settingsTitle: 'Settings',
+    nameLabel: 'Name',
+    languageLabel: 'Language',
+    darkModeLabel: 'Dark mode',
+    notifLabel: 'Notifications',
+    saveButton: 'Save',
+    settingsSaved: 'Settings saved',
+    statsTitle: 'Stats',
+    goalsTitle: 'Goals',
+    aiTitle: 'Wellness AI Coach',
+    aiPlaceholder: 'Type your message...',
+    aiGreeting: 'Hi {name}! How can I help you?',
+    profileTitle: 'Profile',
+    profileInfo: 'Alex de Vries - 28 years',
+    profileBack: 'Back',
+    navHome: 'Home',
+    navStats: 'Stats',
+    navGoals: 'Goals',
+    navSettings: 'Settings',
+    navAi: 'AI',
+    homeStepsTitle: 'Steps today',
+    homeSleepTitle: 'Sleep',
+    homeCaloriesTitle: 'Calories',
+    statsWeeklyStepsLabel: 'Weekly steps',
+    statsAverageSleepLabel: 'Average sleep',
+    statsAverageCaloriesLabel: 'Average calories',
+    goalStepsLabel: '10,000 steps per day',
+    goalWaterLabel: 'Drink 2L water',
+    goalMarkButton: 'Mark',
+    goalDoneButton: 'Done'
+  }
+};
+
+function applyLanguage(lang) {
+  const trans = translations[lang] || translations.nl;
+  const name = document.getElementById('user-name').value || 'Alex';
+
+  document.title = trans.pageTitle;
+  document.documentElement.lang = lang === 'en' ? 'en' : 'nl';
+  document.getElementById('header-greeting').textContent = trans.greeting.replace('{name}', name);
+  document.getElementById('settings-title').textContent = trans.settingsTitle;
+  document.getElementById('label-name').textContent = trans.nameLabel;
+  document.getElementById('label-language').textContent = trans.languageLabel;
+  document.getElementById('label-dark-mode').textContent = trans.darkModeLabel;
+  document.getElementById('label-notif').textContent = trans.notifLabel;
+  document.getElementById('save-settings-btn').textContent = trans.saveButton;
+  document.getElementById('stats-title').textContent = trans.statsTitle;
+  document.getElementById('goals-title').textContent = trans.goalsTitle;
+  document.getElementById('ai-title').textContent = trans.aiTitle;
+  document.getElementById('ai-input').placeholder = trans.aiPlaceholder;
+  const initialAi = document.querySelector('#messages .message.ai');
+  if (initialAi) initialAi.textContent = trans.aiGreeting.replace('{name}', name);
+
+  const maybeGreeting = document.getElementById('header-greeting');
+  if (maybeGreeting) maybeGreeting.textContent = trans.greeting.replace('{name}', name);
+
+  document.getElementById('profile-title').textContent = trans.profileTitle;
+  document.getElementById('profile-info').textContent = trans.profileInfo;
+  document.getElementById('profile-back-btn').textContent = trans.profileBack;
+  document.getElementById('nav-home').textContent = trans.navHome;
+  document.getElementById('nav-stats').textContent = trans.navStats;
+  document.getElementById('nav-goals').textContent = trans.navGoals;
+  document.getElementById('nav-settings').textContent = trans.navSettings;
+  document.getElementById('nav-ai').textContent = trans.navAi;
+  document.getElementById('home-steps-title').textContent = trans.homeStepsTitle;
+  document.getElementById('home-sleep-title').textContent = trans.homeSleepTitle;
+  document.getElementById('home-calories-title').textContent = trans.homeCaloriesTitle;
+  document.getElementById('stats-weekly-steps-label').textContent = trans.statsWeeklyStepsLabel;
+  document.getElementById('stats-average-sleep-label').textContent = trans.statsAverageSleepLabel;
+  document.getElementById('stats-average-calories-label').textContent = trans.statsAverageCaloriesLabel;
+  document.getElementById('goal-steps-label').textContent = trans.goalStepsLabel;
+  document.getElementById('goal-water-label').textContent = trans.goalWaterLabel;
+
+  const stepsBtn = document.getElementById('goal-steps-btn');
+  const waterBtn = document.getElementById('goal-water-btn');
+  stepsBtn.textContent = stepsBtn.disabled ? trans.goalDoneButton : trans.goalMarkButton;
+  waterBtn.textContent = waterBtn.disabled ? trans.goalDoneButton : trans.goalMarkButton;
+
+  document.getElementById('language-nl').classList.toggle('active', lang === 'nl');
+  document.getElementById('language-en').classList.toggle('active', lang === 'en');
+}
+
+function setLanguage(lang) {
+  localStorage.setItem('language', lang);
+  applyLanguage(lang);
+}
+
 function saveSettings() {
   const name = document.getElementById('user-name').value || 'Alex';
   const notifs = document.getElementById('notif-toggle').checked;
   localStorage.setItem('userName', name);
   localStorage.setItem('notifications', notifs ? '1' : '0');
-  // simple feedback
-  alert('Instellingen opgeslagen');
+  const currentLanguage = localStorage.getItem('language') || 'nl';
+  alert(translations[currentLanguage].settingsSaved);
 }
 
 function loadSettings() {
@@ -88,17 +213,23 @@ function loadSettings() {
     document.getElementById('dark-mode-toggle').checked = true;
     document.documentElement.setAttribute('data-theme', 'dark');
   }
+
+  const language = localStorage.getItem('language') || 'nl';
+  setLanguage(language);
 }
 
 // Markeer doel als voltooid
 function completeGoal(id) {
+  const currentLanguage = localStorage.getItem('language') || 'nl';
+  const doneText = translations[currentLanguage].goalDoneButton;
+
   if (id === 'steps') {
     const bar = document.getElementById('goal-steps');
     const btn = document.getElementById('goal-steps-btn');
     bar.style.width = '100%';
     bar.textContent = '100%';
     btn.disabled = true;
-    btn.textContent = 'Voltooid';
+    btn.textContent = doneText;
   }
   if (id === 'water') {
     const bar = document.getElementById('goal-water');
@@ -106,6 +237,6 @@ function completeGoal(id) {
     bar.style.width = '100%';
     bar.textContent = '100%';
     btn.disabled = true;
-    btn.textContent = 'Voltooid';
+    btn.textContent = doneText;
   }
 }
