@@ -2,23 +2,40 @@
     :root {
       --primary: #22c55e;
       --dark: #1f2937;
+      --text: #0f172a;
+      --background: linear-gradient(135deg, #f1f5f9, #e0e7ff);
+      --surface: #ffffff;
+      --surface-alt: #f8fafc;
+      --border: #e2e8f0;
+      --input-bg: #ffffff;
+      --input-border: #d1d5db;
+      --card-shadow: rgba(15, 23, 42, 0.08);
     }
 
     [data-theme="dark"] {
       --primary: #4ade80;
       --dark: #f1f5f9;
+      --text: #f8fafc;
+      --background: linear-gradient(135deg, #0f172a, #1e2937);
+      --surface: #1f2937;
+      --surface-alt: #334155;
+      --border: #475569;
+      --input-bg: #0f172a;
+      --input-border: #475569;
+      --card-shadow: rgba(0, 0, 0, 0.25);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      background: linear-gradient(135deg, #f1f5f9, #e0e7ff);
+      background: var(--background);
+      color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       min-height: 100vh;
       padding: 0;
     }
 
-    [data-theme="dark"] body { background: linear-gradient(135deg, #0f172a, #1e2937); }
+    [data-theme="dark"] body { color: var(--text); }
 
     /* App Container Bootstrap */
     .app-container {
@@ -37,7 +54,8 @@
     }
 
     .app {
-      background: white;
+      background: var(--surface);
+      color: var(--text);
       width: 100%;
       max-width: 800px;
       height: 100%;
@@ -51,11 +69,11 @@
         height: auto;
         min-height: 600px;
         border-radius: 24px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 40px var(--card-shadow);
       }
     }
 
-    [data-theme="dark"] .app { background: #1e2937; color: #f1f5f9; }
+    [data-theme="dark"] .app { background: var(--surface); color: var(--text); }
 
     .app-header {
       background: var(--dark);
@@ -116,12 +134,13 @@
     .tab-content.active { display: block; }
 
     .card {
-      background: #f8fafc;
+      background: var(--surface-alt);
       border-radius: 18px;
       padding: 16px;
       margin-bottom: 0;
-      border: none;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 8px var(--card-shadow);
+      color: var(--text);
     }
 
     .card .card-title {
@@ -141,7 +160,62 @@
       }
     }
 
-    [data-theme="dark"] .card { background: #334155; }
+    .form-control,
+    .form-check-input,
+    .form-check-label,
+    .progress,
+    .list-group-item,
+    .profile,
+    .bottom-nav,
+    .messages,
+    #ai-input,
+    .card {
+      transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    .form-control,
+    #ai-input {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text);
+    }
+
+    .form-control:focus,
+    #ai-input:focus {
+      box-shadow: 0 0 0 0.15rem rgba(34, 197, 94, 0.25);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover,
+    .btn-outline-success:hover,
+    .btn-outline-success:focus {
+      background: #16a34a;
+      color: white;
+      border-color: #16a34a;
+    }
+
+    .list-group-item {
+      background: var(--surface-alt);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .progress {
+      background: var(--surface);
+      border-radius: 9999px;
+      height: 10px;
+      border: 1px solid var(--border);
+    }
+
+    .progress-bar {
+      background: var(--primary) !important;
+    }
+
+    [data-theme="dark"] .card .card-title { color: #cbd5e1; }
 
     .value { 
       font-size: 2rem; 
@@ -247,6 +321,34 @@
         font-size: 1.5rem;
         margin-bottom: 6px;
       }
+    }
+
+    .form-check-label,
+    .form-label,
+    label {
+      color: var(--text);
+    }
+
+    .form-check-input {
+      background: var(--input-bg);
+      border-color: var(--input-border);
+    }
+
+    .bottom-nav {
+      background: var(--surface-alt);
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-item {
+      color: #64748b;
+    }
+
+    [data-theme="dark"] .nav-item {
+      color: #94a3b8;
+    }
+
+    [data-theme="dark"] .nav-item.active {
+      color: var(--primary);
     }
 
     /* Desktop responsief */
