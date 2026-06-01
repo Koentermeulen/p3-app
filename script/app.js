@@ -102,6 +102,8 @@ const translations = {
     statsAverageCaloriesLabel: 'Gemiddelde calorieën',
     goalStepsLabel: '10.000 stappen per dag',
     goalWaterLabel: 'Drink 2L water',
+    goalSleepLabel: 'Slaap 8 uur',
+    goalVegLabel: 'Eet 5 porties groenten',
     goalMarkButton: 'Markeer',
     goalDoneButton: 'Voltooid'
   },
@@ -136,6 +138,8 @@ const translations = {
     statsAverageCaloriesLabel: 'Average calories',
     goalStepsLabel: '10,000 steps per day',
     goalWaterLabel: 'Drink 2L water',
+    goalSleepLabel: 'Sleep 8 hours',
+    goalVegLabel: 'Eat 5 servings of vegetables',
     goalMarkButton: 'Mark',
     goalDoneButton: 'Done'
   }
@@ -149,7 +153,7 @@ const translations = {
 
     // map of elementId -> translationKey (placeholder flag optional)
     const map = [
-      ['header-greeting','greeting'],['settings-title','settingsTitle'],['label-name','nameLabel'],['label-language','languageLabel'],['label-dark-mode','darkModeLabel'],['label-notif','notifLabel'],['save-settings-btn','saveButton'],['stats-title','statsTitle'],['goals-title','goalsTitle'],['ai-title','aiTitle'],['profile-title','profileTitle'],['profile-info','profileInfo'],['profile-back-btn','profileBack'],['nav-home','navHome'],['nav-stats','navStats'],['nav-goals','navGoals'],['nav-settings','navSettings'],['nav-ai','navAi'],['home-steps-title','homeStepsTitle'],['home-sleep-title','homeSleepTitle'],['home-calories-title','homeCaloriesTitle'],['stats-weekly-steps-label','statsWeeklyStepsLabel'],['stats-average-sleep-label','statsAverageSleepLabel'],['stats-average-calories-label','statsAverageCaloriesLabel'],['goal-steps-label','goalStepsLabel'],['goal-water-label','goalWaterLabel']
+      ['header-greeting','greeting'],['settings-title','settingsTitle'],['label-name','nameLabel'],['label-language','languageLabel'],['label-dark-mode','darkModeLabel'],['label-notif','notifLabel'],['save-settings-btn','saveButton'],['stats-title','statsTitle'],['goals-title','goalsTitle'],['ai-title','aiTitle'],['profile-title','profileTitle'],['profile-info','profileInfo'],['profile-back-btn','profileBack'],['nav-home','navHome'],['nav-stats','navStats'],['nav-goals','navGoals'],['nav-settings','navSettings'],['nav-ai','navAi'],['home-steps-title','homeStepsTitle'],['home-sleep-title','homeSleepTitle'],['home-calories-title','homeCaloriesTitle'],['stats-weekly-steps-label','statsWeeklyStepsLabel'],['stats-average-sleep-label','statsAverageSleepLabel'],['stats-average-calories-label','statsAverageCaloriesLabel'],['goal-steps-label','goalStepsLabel'],['goal-water-label','goalWaterLabel'],['goal-sleep-label','goalSleepLabel'],['goal-veg-label','goalVegLabel']
     ];
 
     map.forEach(([id,key]) => {
@@ -164,7 +168,7 @@ const translations = {
     if (aiMsg) aiMsg.textContent = trans.aiGreeting.replace('{name}', name);
 
     // buttons that depend on disabled state
-    ['goal-steps-btn','goal-water-btn'].forEach(btnId => {
+    ['goal-steps-btn','goal-water-btn','goal-sleep-btn','goal-veg-btn'].forEach(btnId => {
       const btn = el(btnId); if (!btn) return;
       btn.textContent = btn.disabled ? trans.goalDoneButton : trans.goalMarkButton;
     });
@@ -198,7 +202,12 @@ function loadSettings() {
   function completeGoal(id) {
     const currentLanguage = localStorage.getItem('language') || 'nl';
     const doneText = translations[currentLanguage].goalDoneButton;
-    const mapping = { steps: ['goal-steps','goal-steps-btn'], water: ['goal-water','goal-water-btn'] };
+    const mapping = {
+      steps: ['goal-steps','goal-steps-btn'],
+      water: ['goal-water','goal-water-btn'],
+      sleep: ['goal-sleep','goal-sleep-btn'],
+      veg: ['goal-veg','goal-veg-btn']
+    };
     const m = mapping[id]; if (!m) return;
     const bar = el(m[0]); const btn = el(m[1]); if (bar) { bar.style.width = '100%'; bar.textContent = '100%'; }
     if (btn) { btn.disabled = true; btn.textContent = doneText; }
