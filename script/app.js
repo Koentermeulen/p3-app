@@ -18,30 +18,28 @@ function closeProfile() {
 }
 
 // AI Chat functionaliteit
-function sendMessage() {
-  const input = document.getElementById('ai-input');
-  const messages = document.getElementById('messages');
-  
-  if (!input.value.trim()) return;
 
-  messages.innerHTML += `<div class="message user">${input.value}</div>`;
-  messages.scrollTop = messages.scrollHeight;
 
-  const text = input.value.toLowerCase();
-  input.value = '';
 
-  // AI antwoord simuleren
-  setTimeout(() => {
-    let reply = "Bedankt voor je bericht!";
-    if (text.includes("stap")) reply = "Je hebt vandaag 8.421 stappen gezet. Nog even doorzetten!";
-    if (text.includes("water")) reply = "Je hebt 1.6 liter water gedronken. Nog 0.9 liter te gaan!";
-    if (text.includes("slaap")) reply = "Je slaapt goed! Zorg dat je voldoende water drinkt.";
-    if (text.includes("calorie")) reply = "Je bent goed op schema met je calorieën!";
-    
-    messages.innerHTML += `<div class="message ai">${reply}</div>`;
+  function sendMessage() {
+    const input = el('ai-input');
+    const messages = el('messages');
+    if (!input || !input.value.trim()) return;
+    const text = input.value;
+    messages.insertAdjacentHTML('beforeend', `<div class="message user">${escapeHtml(text)}</div>`);
     messages.scrollTop = messages.scrollHeight;
-  }, 600);
-}
+    input.value = '';
+    setTimeout(() => {
+      const t = text.toLowerCase();
+      const reply = t.includes('stap') ? 'Je hebt vandaag 8.421 stappen gezet. Nog even doorzetten!'
+        : t.includes('water') ? 'Je hebt 1.6 liter water gedronken. Nog 0.9 liter te gaan!'
+        : t.includes('slaap') ? 'Je slaapt goed! Zorg dat je voldoende water drinkt.'
+        : t.includes('calorie') ? 'Je bent goed op schema met je calorieën!'
+        : 'Bedankt voor je bericht!';
+      messages.insertAdjacentHTML('beforeend', `<div class="message ai">${escapeHtml(reply)}</div>`);
+      messages.scrollTop = messages.scrollHeight;
+    }, 600);
+  }
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', function() {
@@ -66,6 +64,11 @@ function toggleTheme(enable) {
     localStorage.removeItem('theme');
   }
 }
+
+// Small helpers to keep code short and safe
+const el = id => document.getElementById(id);
+const setText = (id, txt) => { const node = el(id); if (!node) return; if (node.tagName === 'INPUT' || node.tagName === 'TEXTAREA') node.placeholder = txt; else node.textContent = txt; };
+const escapeHtml = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[c]);
 
 const translations = {
   nl: {
@@ -138,54 +141,37 @@ const translations = {
   }
 };
 
-function applyLanguage(lang) {
-  const trans = translations[lang] || translations.nl;
-  const name = document.getElementById('user-name').value || 'Alex';
+  function applyLanguage(lang) {
+    const trans = translations[lang] || translations.nl;
+    const name = el('user-name') && el('user-name').value ? el('user-name').value : 'Alex';
+    document.title = trans.pageTitle;
+    document.documentElement.lang = lang === 'en' ? 'en' : 'nl';
 
-  document.title = trans.pageTitle;
-  document.documentElement.lang = lang === 'en' ? 'en' : 'nl';
-  document.getElementById('header-greeting').textContent = trans.greeting.replace('{name}', name);
-  document.getElementById('settings-title').textContent = trans.settingsTitle;
-  document.getElementById('label-name').textContent = trans.nameLabel;
-  document.getElementById('label-language').textContent = trans.languageLabel;
-  document.getElementById('label-dark-mode').textContent = trans.darkModeLabel;
-  document.getElementById('label-notif').textContent = trans.notifLabel;
-  document.getElementById('save-settings-btn').textContent = trans.saveButton;
-  document.getElementById('stats-title').textContent = trans.statsTitle;
-  document.getElementById('goals-title').textContent = trans.goalsTitle;
-  document.getElementById('ai-title').textContent = trans.aiTitle;
-  document.getElementById('ai-input').placeholder = trans.aiPlaceholder;
-  const initialAi = document.querySelector('#messages .message.ai');
-  if (initialAi) initialAi.textContent = trans.aiGreeting.replace('{name}', name);
+    // map of elementId -> translationKey (placeholder flag optional)
+    const map = [
+      ['header-greeting','greeting'],['settings-title','settingsTitle'],['label-name','nameLabel'],['label-language','languageLabel'],['label-dark-mode','darkModeLabel'],['label-notif','notifLabel'],['save-settings-btn','saveButton'],['stats-title','statsTitle'],['goals-title','goalsTitle'],['ai-title','aiTitle'],['profile-title','profileTitle'],['profile-info','profileInfo'],['profile-back-btn','profileBack'],['nav-home','navHome'],['nav-stats','navStats'],['nav-goals','navGoals'],['nav-settings','navSettings'],['nav-ai','navAi'],['home-steps-title','homeStepsTitle'],['home-sleep-title','homeSleepTitle'],['home-calories-title','homeCaloriesTitle'],['stats-weekly-steps-label','statsWeeklyStepsLabel'],['stats-average-sleep-label','statsAverageSleepLabel'],['stats-average-calories-label','statsAverageCaloriesLabel'],['goal-steps-label','goalStepsLabel'],['goal-water-label','goalWaterLabel']
+    ];
 
-  const maybeGreeting = document.getElementById('header-greeting');
-  if (maybeGreeting) maybeGreeting.textContent = trans.greeting.replace('{name}', name);
+    map.forEach(([id,key]) => {
+      const text = (trans[key] || '').replace('{name}', name);
+      // ai-input uses placeholder
+      if (id === 'ai-input') setText(id, text); else setText(id, text);
+    });
 
-  document.getElementById('profile-title').textContent = trans.profileTitle;
-  document.getElementById('profile-info').textContent = trans.profileInfo;
-  document.getElementById('profile-back-btn').textContent = trans.profileBack;
-  document.getElementById('nav-home').textContent = trans.navHome;
-  document.getElementById('nav-stats').textContent = trans.navStats;
-  document.getElementById('nav-goals').textContent = trans.navGoals;
-  document.getElementById('nav-settings').textContent = trans.navSettings;
-  document.getElementById('nav-ai').textContent = trans.navAi;
-  document.getElementById('home-steps-title').textContent = trans.homeStepsTitle;
-  document.getElementById('home-sleep-title').textContent = trans.homeSleepTitle;
-  document.getElementById('home-calories-title').textContent = trans.homeCaloriesTitle;
-  document.getElementById('stats-weekly-steps-label').textContent = trans.statsWeeklyStepsLabel;
-  document.getElementById('stats-average-sleep-label').textContent = trans.statsAverageSleepLabel;
-  document.getElementById('stats-average-calories-label').textContent = trans.statsAverageCaloriesLabel;
-  document.getElementById('goal-steps-label').textContent = trans.goalStepsLabel;
-  document.getElementById('goal-water-label').textContent = trans.goalWaterLabel;
+    // ai input placeholder and initial ai message
+    if (el('ai-input')) el('ai-input').placeholder = trans.aiPlaceholder;
+    const aiMsg = document.querySelector('#messages .message.ai');
+    if (aiMsg) aiMsg.textContent = trans.aiGreeting.replace('{name}', name);
 
-  const stepsBtn = document.getElementById('goal-steps-btn');
-  const waterBtn = document.getElementById('goal-water-btn');
-  stepsBtn.textContent = stepsBtn.disabled ? trans.goalDoneButton : trans.goalMarkButton;
-  waterBtn.textContent = waterBtn.disabled ? trans.goalDoneButton : trans.goalMarkButton;
+    // buttons that depend on disabled state
+    ['goal-steps-btn','goal-water-btn'].forEach(btnId => {
+      const btn = el(btnId); if (!btn) return;
+      btn.textContent = btn.disabled ? trans.goalDoneButton : trans.goalMarkButton;
+    });
 
-  document.getElementById('language-nl').classList.toggle('active', lang === 'nl');
-  document.getElementById('language-en').classList.toggle('active', lang === 'en');
-}
+    el('language-nl') && el('language-nl').classList.toggle('active', lang === 'nl');
+    el('language-en') && el('language-en').classList.toggle('active', lang === 'en');
+  }
 
 function setLanguage(lang) {
   localStorage.setItem('language', lang);
@@ -193,50 +179,27 @@ function setLanguage(lang) {
 }
 
 function saveSettings() {
-  const name = document.getElementById('user-name').value || 'Alex';
-  const notifs = document.getElementById('notif-toggle').checked;
-  localStorage.setItem('userName', name);
-  localStorage.setItem('notifications', notifs ? '1' : '0');
-  const currentLanguage = localStorage.getItem('language') || 'nl';
-  alert(translations[currentLanguage].settingsSaved);
+    const name = el('user-name') && el('user-name').value ? el('user-name').value : 'Alex';
+    const notifs = el('notif-toggle') && el('notif-toggle').checked;
+    localStorage.setItem('userName', name);
+    localStorage.setItem('notifications', notifs ? '1' : '0');
+    const currentLanguage = localStorage.getItem('language') || 'nl';
+    alert(translations[currentLanguage].settingsSaved);
 }
 
 function loadSettings() {
-  const name = localStorage.getItem('userName');
-  if (name) document.getElementById('user-name').value = name;
-
-  const notifs = localStorage.getItem('notifications');
-  if (notifs !== null) document.getElementById('notif-toggle').checked = notifs === '1';
-
-  const theme = localStorage.getItem('theme');
-  if (theme === 'dark') {
-    document.getElementById('dark-mode-toggle').checked = true;
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }
-
-  const language = localStorage.getItem('language') || 'nl';
-  setLanguage(language);
+    const name = localStorage.getItem('userName'); if (name && el('user-name')) el('user-name').value = name;
+    const notifs = localStorage.getItem('notifications'); if (notifs !== null && el('notif-toggle')) el('notif-toggle').checked = notifs === '1';
+    const theme = localStorage.getItem('theme'); if (theme === 'dark' && el('dark-mode-toggle')) { el('dark-mode-toggle').checked = true; document.documentElement.setAttribute('data-theme', 'dark'); }
+    const language = localStorage.getItem('language') || 'nl'; setLanguage(language);
 }
 
 // Markeer doel als voltooid
-function completeGoal(id) {
-  const currentLanguage = localStorage.getItem('language') || 'nl';
-  const doneText = translations[currentLanguage].goalDoneButton;
-
-  if (id === 'steps') {
-    const bar = document.getElementById('goal-steps');
-    const btn = document.getElementById('goal-steps-btn');
-    bar.style.width = '100%';
-    bar.textContent = '100%';
-    btn.disabled = true;
-    btn.textContent = doneText;
+  function completeGoal(id) {
+    const currentLanguage = localStorage.getItem('language') || 'nl';
+    const doneText = translations[currentLanguage].goalDoneButton;
+    const mapping = { steps: ['goal-steps','goal-steps-btn'], water: ['goal-water','goal-water-btn'] };
+    const m = mapping[id]; if (!m) return;
+    const bar = el(m[0]); const btn = el(m[1]); if (bar) { bar.style.width = '100%'; bar.textContent = '100%'; }
+    if (btn) { btn.disabled = true; btn.textContent = doneText; }
   }
-  if (id === 'water') {
-    const bar = document.getElementById('goal-water');
-    const btn = document.getElementById('goal-water-btn');
-    bar.style.width = '100%';
-    bar.textContent = '100%';
-    btn.disabled = true;
-    btn.textContent = doneText;
-  }
-}
