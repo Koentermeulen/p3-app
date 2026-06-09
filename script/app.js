@@ -107,9 +107,17 @@ function resetEntries() {
 
 function renderEntries() {
   const container = el('entries-list');
+  const summary = el('entries-summary');
   if (!container) return;
 
   const entries = getEntries();
+  const totalValue = entries.reduce((sum, entry) => sum + Number(entry.value), 0);
+  if (summary) {
+    summary.textContent = entries.length
+      ? `Items: ${entries.length} · Totaal waarde: ${totalValue}`
+      : 'Geen items opgeslagen.';
+  }
+
   if (!entries.length) {
     container.innerHTML = '<div class="list-group-item">Geen items opgeslagen.</div>';
     return;
