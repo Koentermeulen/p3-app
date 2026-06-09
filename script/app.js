@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load saved settings (name, theme)
   loadSettings();
   renderEntries();
+  renderCustomGoals();
 });
 
 function getEntries() {
@@ -112,6 +113,84 @@ function resetEntries() {
   if (!confirm('Weet je zeker dat je alle items wilt verwijderen?')) return;
   localStorage.removeItem('entries');
   renderEntries();
+}
+
+function getCustomGoals() {
+  try {
+    return JSON.parse(localStorage.getItem('customGoals') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveCustomGoals(goals) {
+  localStorage.setItem('customGoals', JSON.stringify(goals));
+}
+
+function addCustomGoal(event) {
+  event.preventDefault();
+  const name = el('goal-name') && el('goal-name').value.trim();
+  const progress = el('goal-progress') && Number(el('goal-progress').value);
+
+  if (!name || isNaN(progress) || progress < 0 || progress > 100) {
+    alert('Vul een geldig doel en een percentage tussen 0 en 100 in.');
+    return;
+  }
+
+  const goals = getCustomGoals();
+  goals.push({
+    id: Date.now(),
+    name,
+    progress,
+    done: progress >= 100
+  });
+
+  saveCustomGoals(goals);
+  renderCustomGoals();
+  el('goal-form').reset();
+}
+
+function toggleCustomGoal(id) {
+  const goals = getCustomGoals().map(goal => {
+    if (goal.id === id) {
+      return { ...goal, done: !goal.done, progress: goal.done ? goal.progress : 100 };
+    }
+    return goal;
+  });
+  saveCustomGoals(goals);
+  renderCustomGoals();
+}
+
+function removeCustomGoal(id) {
+  const goals = getCustomGoals().filter(goal => goal.id !== id);
+  saveCustomGoals(goals);
+  renderCustomGoals();
+}
+
+function renderCustomGoals() {
+  const container = el('custom-goals-list');
+  if (!container) return;
+
+  const goals = getCustomGoals();
+  if (!goals.length) {
+    container.innerHTML = '<div class="list-group-item">Nog geen eigen doelen toegevoegd.</div>';
+    return;
+  }
+
+  container.innerHTML = goals.map(goal => `
+    <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start gap-2">
+      <div style="flex:1; margin-right:12px;">
+        <div class="fw-semibold">${escapeHtml(goal.name)}</div>
+        <div class="progress mt-2" style="height:10px;">
+          <div class="progress-bar ${goal.done ? 'bg-success' : 'bg-primary'}" role="progressbar" style="width:${goal.progress}%">${goal.progress}%</div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button type="button" class="btn btn-sm btn-${goal.done ? 'secondary' : 'success'}" onclick="toggleCustomGoal(${goal.id})">${goal.done ? 'Reset' : 'Markeer'}</button>
+        <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeCustomGoal(${goal.id})">Verwijder</button>
+      </div>
+    </div>
+  `).join('');
 }
 
 function renderEntries() {

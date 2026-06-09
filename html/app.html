@@ -95,6 +95,24 @@
 
         <div id="goals" class="tab-content">
           <h3 id="goals-title" class="mb-3">Doelen</h3>
+          <div class="card mb-3 p-3">
+            <h5 class="card-title">Eigen doel toevoegen</h5>
+            <form id="goal-form" onsubmit="addCustomGoal(event)">
+              <div class="row g-2 mb-2">
+                <div class="col-12 col-md-8">
+                  <label class="form-label" for="goal-name">Doel</label>
+                  <input id="goal-name" type="text" class="form-control" placeholder="Bijvoorbeeld: 30 minuten wandelen" required>
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="goal-progress">Startwaarde %</label>
+                  <input id="goal-progress" type="number" class="form-control" placeholder="0" min="0" max="100" value="0" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm">Nieuw doel toevoegen</button>
+            </form>
+            <div id="custom-goals-list" class="list-group mt-3"></div>
+          </div>
+
           <div class="list-group mb-3">
             <div class="list-group-item d-flex justify-content-between align-items-center">
               <div style="flex:1; margin-right:12px;">
