@@ -49,6 +49,15 @@ document.addEventListener('DOMContentLoaded', function() {
       if (e.key === 'Enter') sendMessage();
     });
   }
+
+  const nameInput = el('user-name');
+  if (nameInput) {
+    nameInput.addEventListener('input', () => {
+      const name = nameInput.value.trim();
+      updateProfileInitials(name);
+      updateGreeting(name);
+    });
+  }
   
   // Load saved settings (name, theme)
   loadSettings();
@@ -123,7 +132,7 @@ function renderEntries() {
     return;
   }
 
-  container.innerHTML = entries.map(entry => `
+  container.innerHTML = entries.map(entry => ` 
     <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start gap-2">
       <div>
         <div><strong>Datum:</strong> ${escapeHtml(entry.date)}</div>
@@ -145,6 +154,33 @@ function toggleTheme(enable) {
     document.documentElement.removeAttribute('data-theme');
     localStorage.removeItem('theme');
   }
+}
+
+function getInitials(name) {
+  if (!name) return 'AD';
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return 'AD';
+  const first = parts[0][0] || '';
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (first + last).toUpperCase();
+}
+
+function updateProfileInitials(name) {
+  const initials = getInitials(name);
+  const profile = el('profile-initials');
+  if (profile) profile.textContent = initials;
+}
+
+function updateGreeting(name) {
+  const currentLanguage = localStorage.getItem('language') || 'nl';
+  const trans = translations[currentLanguage] || translations.nl;
+  const user = name || 'Alex';
+  const greeting = trans.greeting.replace('{name}', user);
+  const aiGreeting = trans.aiGreeting.replace('{name}', user);
+  const header = el('header-greeting');
+  if (header) header.textContent = greeting;
+  const aiMsg = document.querySelector('#messages .message.ai');
+  if (aiMsg) aiMsg.textContent = aiGreeting;
 }
 
 // Small helpers to keep code short and safe
@@ -269,6 +305,8 @@ function saveSettings() {
     const notifs = el('notif-toggle') && el('notif-toggle').checked;
     localStorage.setItem('userName', name);
     localStorage.setItem('notifications', notifs ? '1' : '0');
+    updateProfileInitials(name);
+    updateGreeting(name);
     const currentLanguage = localStorage.getItem('language') || 'nl';
     alert(translations[currentLanguage].settingsSaved);
 }
@@ -278,6 +316,9 @@ function loadSettings() {
     const notifs = localStorage.getItem('notifications'); if (notifs !== null && el('notif-toggle')) el('notif-toggle').checked = notifs === '1';
     const theme = localStorage.getItem('theme'); if (theme === 'dark' && el('dark-mode-toggle')) { el('dark-mode-toggle').checked = true; document.documentElement.setAttribute('data-theme', 'dark'); }
     const language = localStorage.getItem('language') || 'nl'; setLanguage(language);
+    const activeName = name || (el('user-name') && el('user-name').value) || 'Alex';
+    updateProfileInitials(activeName);
+    updateGreeting(activeName);
 }
 
 // Markeer doel als voltooid
