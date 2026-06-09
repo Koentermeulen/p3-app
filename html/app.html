@@ -19,7 +19,7 @@
       <div class="app-header">
         <div id="header-greeting">Goedemorgen, Alex 👋</div>
         <div class="profile" onclick="openProfile()">AD</div>
-      </div>
+      </div> 
 
       <div class="main-content">
         <!-- HOME -->
@@ -61,6 +61,34 @@
                 <div class="value">2.050</div>
               </div>
             </div>
+          </div>
+          <div class="card mb-3 p-3">
+            <h5 class="card-title">Itembeheer</h5>
+            <form id="entry-form" onsubmit="addEntry(event)">
+              <div class="row g-2 mb-2">
+                <div class="col-12 col-md-3">
+                  <label class="form-label" for="entry-date">Datum</label>
+                  <input id="entry-date" type="date" class="form-control" required>
+                </div>
+                <div class="col-12 col-md-3">
+                  <label class="form-label" for="entry-category">Categorie</label>
+                  <input id="entry-category" type="text" class="form-control" placeholder="Categorie" required>
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label" for="entry-description">Omschrijving</label>
+                  <input id="entry-description" type="text" class="form-control" placeholder="Omschrijving" required>
+                </div>
+                <div class="col-12 col-md-2">
+                  <label class="form-label" for="entry-value">Waarde</label>
+                  <input id="entry-value" type="number" class="form-control" placeholder="0" required>
+                </div>
+              </div>
+              <div class="d-flex gap-2 flex-wrap">
+                <button type="submit" class="btn btn-primary btn-sm">Toevoegen</button>
+                <button type="button" class="btn btn-outline-danger btn-sm" onclick="resetEntries()">Reset alle items</button>
+              </div>
+            </form>
+            <div id="entries-list" class="list-group"></div>
           </div>
         </div>
 

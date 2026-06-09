@@ -52,7 +52,81 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Load saved settings (name, theme)
   loadSettings();
+  renderEntries();
 });
+
+function getEntries() {
+  try {
+    return JSON.parse(localStorage.getItem('entries') || '[]');
+  } catch {
+    return [];
+  }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem('entries', JSON.stringify(entries));
+}
+
+function addEntry(event) {
+  event.preventDefault();
+  const date = el('entry-date') && el('entry-date').value;
+  const category = el('entry-category') && el('entry-category').value.trim();
+  const description = el('entry-description') && el('entry-description').value.trim();
+  const value = el('entry-value') && el('entry-value').value;
+
+  if (!date || !category || !description || !value) {
+    alert('Vul datum, categorie, omschrijving en waarde in.');
+    return;
+  }
+
+  const entries = getEntries();
+  entries.push({
+    id: Date.now(),
+    date,
+    category,
+    description,
+    value: Number(value)
+  });
+
+  saveEntries(entries);
+  renderEntries();
+  el('entry-form').reset();
+}
+
+function removeEntry(id) {
+  const entries = getEntries().filter(entry => entry.id !== id);
+  saveEntries(entries);
+  renderEntries();
+}
+
+function resetEntries() {
+  if (!confirm('Weet je zeker dat je alle items wilt verwijderen?')) return;
+  localStorage.removeItem('entries');
+  renderEntries();
+}
+
+function renderEntries() {
+  const container = el('entries-list');
+  if (!container) return;
+
+  const entries = getEntries();
+  if (!entries.length) {
+    container.innerHTML = '<div class="list-group-item">Geen items opgeslagen.</div>';
+    return;
+  }
+
+  container.innerHTML = entries.map(entry => `
+    <div class="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start gap-2">
+      <div>
+        <div><strong>Datum:</strong> ${escapeHtml(entry.date)}</div>
+        <div><strong>Categorie:</strong> ${escapeHtml(entry.category)}</div>
+        <div><strong>Omschrijving:</strong> ${escapeHtml(entry.description)}</div>
+        <div><strong>Waarde:</strong> ${escapeHtml(String(entry.value))}</div>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary mt-2 mt-md-0" onclick="removeEntry(${entry.id})">Verwijder</button>
+    </div>
+  `).join('');
+}
 
 // Toggle dark theme and persist
 function toggleTheme(enable) {
